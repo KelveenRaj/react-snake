@@ -11,14 +11,7 @@ const ScoreBoard = () => {
   }, []);
 
   return (
-    <Box
-      border="1px solid"
-      borderColor="gray.300"
-      p={4}
-      borderRadius="md"
-      maxW="400px"
-      mx="auto"
-    >
+    <Box p={4} borderRadius="md" maxW="400px" mx="auto">
       <Heading size="md" mb={3} textAlign="center">
         Top 5 Scores
       </Heading>

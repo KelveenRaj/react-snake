@@ -223,7 +223,10 @@ const App = () => {
       align="center"
       w="100%"
       p={4}
+      height={"100vh"}
       gap={6}
+      backgroundColor={"#ffd"}
+      fontFamily={"arial"}
     >
       <Box
         flex="1"
@@ -235,6 +238,7 @@ const App = () => {
         flexDirection="column"
         alignItems="center"
         justifyContent="flex-start"
+        backgroundColor={"#a2c579"}
       >
         <Text fontSize="2xl" fontWeight="bold" mb={2}>
           Snake Game
@@ -248,8 +252,9 @@ const App = () => {
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 maxW="200px"
+                background="white"
               />
-              <Button colorScheme="green" onClick={handleStart}>
+              <Button colorScheme="yellow" onClick={handleStart}>
                 Start Game
               </Button>
             </>
@@ -299,14 +304,12 @@ const App = () => {
       </Box>
 
       <Box
-        flex="1"
         maxW={{ base: "100%", md: "400px" }}
         border="2px solid gray"
         borderRadius="md"
         p={4}
         display="flex"
-        alignItems="center"
-        justifyContent="center"
+        backgroundColor={"#d2de32"}
       >
         <ScoreBoard />
       </Box>
