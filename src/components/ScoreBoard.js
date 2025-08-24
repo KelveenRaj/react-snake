@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Heading, List, ListItem, Text, Divider } from "@chakra-ui/react";
+import { Box, Heading, List, ListItem, Text } from "@chakra-ui/react";
 import { streamTopScores } from "../services/scoreService";
 
 const ScoreBoard = () => {
