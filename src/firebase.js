@@ -7,8 +7,8 @@ const firebaseConfig = {
   projectId: "kelveen-snake-io",
   storageBucket: "kelveen-snake-io.firebasestorage.app",
   messagingSenderId: "208519592837",
-  appId: "1:208519592837:web:969b65e9cbcec89b6422ec"
+  appId: "1:208519592837:web:969b65e9cbcec89b6422ec",
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app)
+export const db = getFirestore(app);

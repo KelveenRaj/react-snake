@@ -225,12 +225,22 @@ const App = () => {
       p={4}
       gap={6}
     >
-      <Box>
+      <Box
+        flex="1"
+        maxW={{ base: "100%", md: "480px" }}
+        border="2px solid gray"
+        borderRadius="md"
+        p={4}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="flex-start"
+      >
         <Text fontSize="2xl" fontWeight="bold" mb={2}>
           Snake Game
         </Text>
 
-        <Flex justify="center" align="center" mt={4} mb={2} gap={4}>
+        <Flex justify="center" align="center" mt={2} mb={2} gap={4}>
           {!isStarted || isGameOver ? (
             <>
               <Input
@@ -253,8 +263,6 @@ const App = () => {
 
         <Box
           ref={boardRef}
-          mt={4}
-          border="2px solid gray"
           display="grid"
           gridTemplateColumns={`repeat(${GRID_SIZE}, ${cellSize}vmin)`}
           gridTemplateRows={`repeat(${GRID_SIZE}, ${cellSize}vmin)`}
@@ -289,7 +297,19 @@ const App = () => {
             })}
         </Box>
       </Box>
-      <ScoreBoard />
+
+      <Box
+        flex="1"
+        maxW={{ base: "100%", md: "400px" }}
+        border="2px solid gray"
+        borderRadius="md"
+        p={4}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <ScoreBoard />
+      </Box>
     </Flex>
   );
 };
