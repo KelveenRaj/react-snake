@@ -1,7 +1,16 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { Box, Flex, Text, Button, useBreakpointValue } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  Input,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { TbAppleFilled } from "react-icons/tb";
+import ScoreBoard from "./components/ScoreBoard";
+import { addScore } from "./services/scoreService";
 
 const GRID_SIZE = 10;
 const INITIAL_SNAKE = [
@@ -36,6 +45,7 @@ const App = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [playerName, setPlayerName] = useState("");
   const [score, setScore] = useState(0);
   const bonusFoodTimeout = useRef(null);
   const boardRef = useRef(null);
@@ -60,6 +70,12 @@ const App = () => {
 
     if (hitWall || hitSelf) {
       setIsGameOver(true);
+
+      if (playerName) {
+        addScore(playerName, score);
+      }
+
+      setIsStarted(false);
       return;
     }
 
@@ -90,13 +106,24 @@ const App = () => {
     }
 
     setSnake(newSnake);
-  }, [snake, direction, food, isGameOver, bonusFood, isStarted, isPaused]);
+  }, [
+    isGameOver,
+    isStarted,
+    isPaused,
+    snake,
+    direction,
+    food,
+    bonusFood,
+    playerName,
+    score,
+  ]);
 
   useEffect(() => {
     const interval = setInterval(moveSnake, 200);
     return () => clearInterval(interval);
   }, [moveSnake]);
 
+  // keyboard controls
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (isGameOver) return;
@@ -105,17 +132,14 @@ const App = () => {
         case "w":
           if (direction.y === 0) setDirection({ x: 0, y: -1 });
           break;
-
         case "ArrowDown":
         case "s":
           if (direction.y === 0) setDirection({ x: 0, y: 1 });
           break;
-
         case "ArrowLeft":
         case "a":
           if (direction.x === 0) setDirection({ x: -1, y: 0 });
           break;
-
         case "ArrowRight":
         case "d":
           if (direction.x === 0) setDirection({ x: 1, y: 0 });
@@ -129,6 +153,7 @@ const App = () => {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [direction, isGameOver]);
 
+  // swipe controls
   useEffect(() => {
     let startX = 0;
     let startY = 0;
@@ -171,6 +196,10 @@ const App = () => {
   }, [direction]);
 
   const handleStart = () => {
+    if (!playerName.trim()) {
+      alert("Please enter your name!");
+      return;
+    }
     setSnake(INITIAL_SNAKE);
     setDirection(INTIAL_DIRECTION);
     setFood(getRandomFoodPosition(INITIAL_SNAKE));
@@ -188,60 +217,79 @@ const App = () => {
   };
 
   return (
-    <Flex align="center" direction="column" mt={4}>
-      <Text fontSize="2xl" fontWeight="bold" mb={2}>
-        Snake Game
-      </Text>
-
-      <Flex justify="center" align="center" mt={4} mb={2} gap={4}>
-        {!isStarted || isGameOver ? (
-          <Button colorScheme="green" onClick={handleStart}>
-            Start Game
-          </Button>
-        ) : (
-          <Button onClick={handlePause}>{isPaused ? "Resume" : "Pause"}</Button>
-        )}
-        <Text fontSize="lg" mb={2}>
-          Score: {score}
+    <Flex
+      direction={{ base: "column", md: "row" }}
+      justify="center"
+      align="center"
+      w="100%"
+      p={4}
+      gap={6}
+    >
+      <Box>
+        <Text fontSize="2xl" fontWeight="bold" mb={2}>
+          Snake Game
         </Text>
-      </Flex>
 
-      <Box
-        ref={boardRef}
-        mt={4}
-        border="2px solid gray"
-        display="grid"
-        gridTemplateColumns={`repeat(${GRID_SIZE}, ${cellSize}vmin)`}
-        gridTemplateRows={`repeat(${GRID_SIZE}, ${cellSize}vmin)`}
-        bg="gray.100"
-        touchAction="none"
-      >
-        {Array(GRID_SIZE * GRID_SIZE)
-          .fill(null)
-          .map((_, idx) => {
-            const x = idx % GRID_SIZE;
-            const y = Math.floor(idx / GRID_SIZE);
+        <Flex justify="center" align="center" mt={4} mb={2} gap={4}>
+          {!isStarted || isGameOver ? (
+            <>
+              <Input
+                placeholder="Enter your name"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                maxW="200px"
+              />
+              <Button colorScheme="green" onClick={handleStart}>
+                Start Game
+              </Button>
+            </>
+          ) : (
+            <Button onClick={handlePause}>
+              {isPaused ? "Resume" : "Pause"}
+            </Button>
+          )}
+          <Text fontSize="lg">Score: {score}</Text>
+        </Flex>
 
-            const isHead = snake.length && snake[0].x === x && snake[0].y === y;
-            const isSnake = snake.some((s) => s.x === x && s.y === y);
-            const isFood = food.x === x && food.y === y;
-            const isBonusFood =
-              bonusFood && bonusFood.x === x && bonusFood.y === y;
+        <Box
+          ref={boardRef}
+          mt={4}
+          border="2px solid gray"
+          display="grid"
+          gridTemplateColumns={`repeat(${GRID_SIZE}, ${cellSize}vmin)`}
+          gridTemplateRows={`repeat(${GRID_SIZE}, ${cellSize}vmin)`}
+          bg="gray.100"
+          touchAction="none"
+        >
+          {Array(GRID_SIZE * GRID_SIZE)
+            .fill(null)
+            .map((_, idx) => {
+              const x = idx % GRID_SIZE;
+              const y = Math.floor(idx / GRID_SIZE);
 
-            return (
-              <Box
-                key={idx}
-                bg={isHead ? "green.700" : isSnake ? "green.500" : "white"}
-                border="1px solid"
-                borderRadius={isHead ? "15px" : isSnake ? "10px" : 0}
-                borderColor="gray.300"
-              >
-                {isFood && <TbAppleFilled color="red" size="100%" />}
-                {isBonusFood && <TbAppleFilled color="gold" size="100%" />}
-              </Box>
-            );
-          })}
+              const isHead =
+                snake.length && snake[0].x === x && snake[0].y === y;
+              const isSnake = snake.some((s) => s.x === x && s.y === y);
+              const isFood = food.x === x && food.y === y;
+              const isBonusFood =
+                bonusFood && bonusFood.x === x && bonusFood.y === y;
+
+              return (
+                <Box
+                  key={idx}
+                  bg={isHead ? "green.700" : isSnake ? "green.500" : "white"}
+                  border="1px solid"
+                  borderRadius={isHead ? "15px" : isSnake ? "10px" : 0}
+                  borderColor="gray.300"
+                >
+                  {isFood && <TbAppleFilled color="red" size="100%" />}
+                  {isBonusFood && <TbAppleFilled color="gold" size="100%" />}
+                </Box>
+              );
+            })}
+        </Box>
       </Box>
+      <ScoreBoard />
     </Flex>
   );
 };
