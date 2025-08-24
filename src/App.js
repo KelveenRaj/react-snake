@@ -219,18 +219,15 @@ const App = () => {
   return (
     <Flex
       direction={{ base: "column", md: "row" }}
-      justify="center"
-      align="center"
-      w="100%"
+      justify={{ base: "none", lg: "center" }}
+      align={{ base: "none", lg: "center" }}
       p={4}
-      height={"100vh"}
-      gap={6}
+      h={{ base: "auto", lg: "100vh" }}
+      gap={{ base: 3, lg: 6 }}
       backgroundColor={"#ffd"}
       fontFamily={"arial"}
     >
       <Box
-        flex="1"
-        maxW={{ base: "100%", md: "480px" }}
         border="2px solid gray"
         borderRadius="md"
         p={4}
@@ -254,8 +251,12 @@ const App = () => {
                 maxW="200px"
                 background="white"
               />
-              <Button colorScheme="yellow" onClick={handleStart}>
-                Start Game
+              <Button
+                colorScheme="yellow"
+                onClick={handleStart}
+                size={{ base: "md", lg: "md" }}
+              >
+                Start
               </Button>
             </>
           ) : (
@@ -263,16 +264,18 @@ const App = () => {
               {isPaused ? "Resume" : "Pause"}
             </Button>
           )}
-          <Text fontSize="lg">Score: {score}</Text>
+          <Text fontSize="md">Score: {score}</Text>
         </Flex>
 
         <Box
           ref={boardRef}
+          maxH={{ base: "50vh", lg: "70vh" }} // shrink board height on mobile
           display="grid"
           gridTemplateColumns={`repeat(${GRID_SIZE}, ${cellSize}vmin)`}
           gridTemplateRows={`repeat(${GRID_SIZE}, ${cellSize}vmin)`}
           bg="gray.100"
           touchAction="none"
+          border="5px solid #61a3ba"
         >
           {Array(GRID_SIZE * GRID_SIZE)
             .fill(null)
